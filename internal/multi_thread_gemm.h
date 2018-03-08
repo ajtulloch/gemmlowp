@@ -135,11 +135,11 @@ T WaitForVariableChange(volatile T* var, T initial_value, pthread_cond_t* cond,
   // Finally, do real passive waiting.
   pthread_mutex_lock(mutex);
   T new_value = *var;
-  if (new_value == initial_value) {
+  while (new_value == initial_value) {
     pthread_cond_wait(cond, mutex);
-    new_value = *var;
-    assert(new_value != initial_value);
   }
+  new_value = *var;
+  assert(new_value != initial_value);
   pthread_mutex_unlock(mutex);
   return new_value;
 }
